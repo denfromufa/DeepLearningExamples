@@ -29,6 +29,7 @@ parser.add_argument("--resume_training", action="store_true", help="Resume train
 parser.add_argument("--results", type=str, default="/results", help="Path to results directory")
 parser.add_argument("--logname", type=str, default="train_logs.json", help="Name of dlloger output")
 parser.add_argument("--learning_rate", type=float, default=8e-4, help="Learning rate")
+parser.add_argument("--epochs", type=int, default=10, help="Learning rate")
 
 if __name__ == "__main__":
     args = parser.parse_args()
@@ -48,7 +49,7 @@ if __name__ == "__main__":
     cmd += f"--layout {'NDHWC' if args.dim == 3 else 'NCDHW'} "
     cmd += f"--fold {args.fold} "
     cmd += f"--gpus {args.gpus} "
-    cmd += f"--epochs {300 if args.gpus == 1 else 600} "
+    #cmd += f"--epochs {300 if args.gpus == 1 else 600} "
     cmd += f"--learning_rate {args.learning_rate} "
     cmd += "--amp " if args.amp else ""
     cmd += "--tta " if args.tta else ""
