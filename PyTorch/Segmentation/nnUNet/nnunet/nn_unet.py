@@ -89,7 +89,10 @@ class NNUnet(pl.LightningModule):
         img, lbl = self.convert_data(img, lbl)
         pred = self.model(img)
         loss = self.compute_loss(pred, lbl)
-        self.train_loss.append(loss.item())
+        try:
+            self.train_loss.append(loss.item())
+        except:
+            self.train_loss.append(loss)
         return loss
 
     def validation_step(self, batch, batch_idx):
@@ -280,9 +283,13 @@ class NNUnet(pl.LightningModule):
     def on_fit_end(self):
         if not self.args.benchmark:
             metrics = {}
-            metrics["dice_score"] = round(self.best_mean.item(), 2)
+            try:
+                best_mean = self.best_mean.item()
+            except:
+                best_mean = self.best_mean
+            metrics["dice_score"] = round(best_mean, 2)
             metrics["train_loss"] = round(sum(self.train_loss) / len(self.train_loss), 4)
-            metrics["val_loss"] = round(1 - self.best_mean.item() / 100, 4)
+            metrics["val_loss"] = round(1 - best_mean / 100, 4)
             metrics["Epoch"] = self.best_epoch
             self.dllogger.log_metrics(step=(), metrics=metrics)
             self.dllogger.flush()
